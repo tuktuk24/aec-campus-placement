@@ -55,6 +55,47 @@ Valid pairs:
 
 Total = 2
 
-## Problem 2 (treaure_hunt.c)
+## Problem 2 (connections.py)
+You are working on the city construction project. You have A houses in the city. You have to divide these houses into B localities such that every locality has at least one house. Also, every house in a locality should have a telephone connection wire with each of the other houses in the locality.
 
+You are given integers A and B.   
+
+### Task
+
+Print the minimum and the maximum number of telephone connections possible if you design the city accordingly.
+
+Example
+
+### Assumptions
+
+A = 6
+B = 3
+### Approach
+
+A minimum number of telephone connections can be achieved if houses were split into localities consisting of 2 houses each. The maximum number can be achieved if localities were split into localities of 1, 1, and 4 houses.
+
+Ans = 3 6
+
+### Function description
+
+Complete the function Minmax() which takes an integer A and an integer B. This function takes the following parameters and returns the required answer: 
+
+A: Represents the number of houses
+B: Represents the number of localities
+Input format
+
+Note: This is the input format you must use to provide custom input (available above the Compile and Test button).
+
+The first line contains an integer A denoting the number of houses.
+The second line contains an integer B denoting the number of localities.
+Output format
+
+Print the minimum and the maximum number of telephone connections possible if you design the city accordingly.
+
+### Constraints
+1 <= B <= A <= 10^9
+
+
+
+## Problem 3: analytics.js
 
