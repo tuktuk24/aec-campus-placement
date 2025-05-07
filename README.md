@@ -98,4 +98,9 @@ Print the minimum and the maximum number of telephone connections possible if yo
 
 
 ## Problem 3: analytics.js
+Given a JSON file of orders dispatched and a CSV file with cancelled order's invoice numbers (invoice_numbers), exclude the cancelled orders and make the required calculations.
+1. Total number of valid orders.
+2. Total cost of all orders ((cost price of all items in order + packaging and labelling cost of the order) * number of valid orders):
+3. Breakdown of Categorywise revenue: All products have corresponding categories. Group them together and add their revenues (Selling Price - GST)
+4. Total Revenue SUM(S.P. - GST of all products in order + shipping of the order)
 
