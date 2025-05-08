@@ -1,6 +1,6 @@
 # aec-campus-placement
 
-## Problem 1 (treaure_hunt.c)
+## Problem 1 (treasure_hunt.c)
 Alice, an aspiring cryptographer, recently discovered an ancient scroll containing a sequence of mysterious numbers. According to a legend, these numbers hold the key to unlocking a hidden treasure buried centuries ago by an enigmatic mathematician. However, deciphering the scroll requires identifying specific pairs of numbers that follow an ancient numerical pattern.
 
 Alice is given an array of integers nums. She wants to determine how many pairs 
