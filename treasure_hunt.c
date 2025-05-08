@@ -3,7 +3,7 @@
 #include<malloc.h>
 long long solve (int n, int* nums) {
     // Write your code here
-
+    //i solved this problem in python
 }
 
 int main() {
