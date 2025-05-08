@@ -27,3 +27,11 @@ const calculateAll = (data, cancelled) => {
 
     return { total_orders, total_cost, breakdown, total_revenue };
 };
+
+/* Given a JSON file of orders dispatched and a CSV file with cancelled order's invoice numbers (invoice_numbers), exclude the cancelled orders and make the required calculations.
+
+Total number of valid orders.
+Total cost of all orders ((cost price of all items in order + packaging and labelling cost of the order) * number of valid orders):
+Breakdown of Categorywise revenue: All products have corresponding categories. Group them together and add their revenues (Selling Price - GST)
+Total Revenue SUM(S.P. - GST of all products in order + shipping of the order)
+/
