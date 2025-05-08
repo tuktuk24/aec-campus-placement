@@ -9,15 +9,15 @@ def solve(n: int, nums: list[int]) -> int:
         
         #group numbers by their digit sum
         if digit_sum in all_sums:
-            all_sums[digit_sum] += 1
+            all_sums[digit_sum] += 1 #if already sum exists then increment the count by 1
         else:
-            all_sums[digit_sum] = 1
+            all_sums[digit_sum] = 1 #if not then set a new key value with the sum and 1
     
     # Calculate pairs for each group
     total_pairs = 0
     for i in all_sums.values():
         # For each group with 'i' numbers, we can form i*(i-1)/2 pairs
-        if i > 1:
+        if i > 1: #if i is 1 that means  all the sums are unique
             total_pairs += (i * (i - 1)) // 2
     
     return total_pairs
