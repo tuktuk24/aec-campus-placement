@@ -3,7 +3,26 @@
 #include<malloc.h>
 long long solve (int n, int* nums) {
     // Write your code here
+    int freq[80] = {0};
+    for(int i = 0; i < n; ++i) {
+        int num = nums[i];
+        int sum = 0;
+        while (num > 0) {
+            sum += num % 10;
+            num /= 10;
+    }
+    freq[sum]++;
+    }
 
+    long long res = 0;
+    for (int s = 1; s <= 81; ++s) {
+        long long count = freq[s];
+        if (count >= 2) {
+            res += (count * (count - 1)) / 2;
+        }
+    }
+
+    return res;
 }
 
 int main() {

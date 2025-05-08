@@ -24,6 +24,8 @@ const calculateAll = (data, cancelled) => {
     let breakdown = [{ category: "TEST", revenue: "10000.00" }];
     let total_revenue = 0;
     // Write here
+    
 
     return { total_orders, total_cost, breakdown, total_revenue };
 };
+
