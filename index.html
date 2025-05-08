@@ -1,24 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Analytics for Littlebox</title>
-    </head>
-    <body>
-        <div>
-            <h1>Total number of orders: <span id="total_orders"></span></h1>
-            <h4>
-                Total cost of orders:(C.P. of items+labelling cost_packaging
-                cost) <span id="total_cost"></span>
-            </h4>
-            <h4>Breakdown of Categorywise revenue: (S.P - GST)</h4>
-            <div id="breakdown"></div>
-            <h4>
-                Total Revenue: (S.P - GST of all products in order + shipping of the
-                order) <span id="total_revenue"></span>
-            </h4>
-        </div>
-        <script src="analytics.js" defer></script>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Analytics</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .stats {
+        margin: 20px 0;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Order Analytics</h1>
+
+    <div class="stats">
+      <h2>Total Valid Orders: <span id="total_orders">0</span></h2>
+      <h2>Total Cost: ₹<span id="total_cost">0.00</span></h2>
+      <h2>Total Revenue: ₹<span id="total_revenue">0.00</span></h2>
+    </div>
+
+    <div class="stats">
+      <h2>Category-wise Revenue Breakdown:</h2>
+      <div id="breakdown"></div>
+    </div>
+
+    <script src="analytics.js"></script>
+  </body>
 </html>
