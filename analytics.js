@@ -23,7 +23,7 @@ const calculateAll = (data, cancelled) => {
     let total_cost = 0;
     let breakdown = [{ category: "TEST", revenue: "10000.00" }];
     let total_revenue = 0;
-    // Write here
+    // Write he
     
 
     return { total_orders, total_cost, breakdown, total_revenue };
