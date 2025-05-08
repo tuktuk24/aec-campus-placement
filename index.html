@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -21,4 +21,47 @@
         </div>
         <script src="analytics.js" defer></script>
     </body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Analytics for Littlebox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background-color: #f5f5f5;
+        }
+        h1, h4 {
+            color: #333;
+        }
+        #breakdown p {
+            margin: 4px 0;
+            padding: 4px;
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding-left: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Total number of valid orders: <span id="total_orders">Loading...</span></h1>
+        <h4>
+            Total cost of all valid orders (C.P. of items + labelling cost + packaging cost): 
+            ₹<span id="total_cost">Loading...</span>
+        </h4>
+        <h4>Breakdown of Category-wise Revenue (Selling Price - GST):</h4>
+        <div id="breakdown"></div>
+        <h4>
+            Total Revenue (SUM(S.P. - GST of items) + shipping): 
+            ₹<span id="total_revenue">Loading...</span>
+        </h4>
+    </div>
+
+    <script src="analytics.js" defer></script>
+</body>
 </html>
