@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Analytics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="container mx-auto bg-white shadow-md rounded-lg p-8">
+        <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Order Analytics Dashboard</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-sm p-4">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Average Order Value (AOV)</h2>
+                <p id="average_order_value" class="text-xl text-blue-600 font-bold">Loading...</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Average Items Per Order</h2>
+                <p id="average_items_per_order" class="text-xl text-blue-600 font-bold">Loading...</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Top Selling Product</h2>
+                <p id="top_selling_product" class="text-xl text-green-600 font-bold">Loading...</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Total Items Sold</h2>
+                <p id="total_items_sold" class="text-xl text-purple-600 font-bold">Loading...</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Payment Method Analysis</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="payment_method_analysis">
+                </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Category Performance (Units Sold)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="category_performance">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // analytics.js
+
+        const formatIndianCurrency = (num) => {
+            const numStr = num.toFixed(2);
+            const parts = numStr.split('.');
+            const wholePart = parts[0];
+            const decimalPart = parts[1];
+
+            let formattedWhole = '';
+            let count = 0;
+
+            for (let i = wholePart.length - 1; i >= 0; i--) {
+                formattedWhole = wholePart[i] + formattedWhole;
+                count++;
+
+                if (i > 0 && count === 3) {
+                    formattedWhole = ',' + formattedWhole;
+                } else if (i > 0 && count > 3 && (count - 3) % 2 === 0) {
+                    formattedWhole = ',' + formattedWhole;
+                }
+            }
+
+            return `₹${formattedWhole}.${decimalPart}`;
+        };
+
+        const calculateAll = (data, cancelled) => {
+            let total_orders = 0;
+            let total_cost = 0;
+            const categoryRevenue = {};
+            let total_revenue = 0;
+
+            data.forEach(order => {
+                if (!cancelled.includes(order.invoice_number)) {
+                    total_orders++;
+                    let orderCost = 0;
+                    let orderRevenue = order.shipping_charges || 0;
+
+                    order.items.forEach(item => {
+                        const costPrice = parseFloat(item.cost_price);
+                        const quantity = parseInt(item.quantity);
+                        orderCost += costPrice * quantity;
+
+                        const sellingPrice = parseFloat(item.selling_price);
+                        const gstAmount = parseFloat(item.gst_amount);
+                        orderRevenue += sellingPrice - gstAmount;
+
+                        const category = item.category;
+                        categoryRevenue[category] = (categoryRevenue[category] || 0) + quantity; // Changed to quantity
+                    });
+
+                    total_cost += orderCost + (order.packaging_cost || 0) + (order.labelling_cost || 0);
+                    total_revenue += orderRevenue;
+                }
+            });
+
+            return { total_orders, total_cost, categoryRevenue, total_revenue };
+        };
+
+        const calculateAdditionalAnalytics = (data, cancelled) => {
+            let total_orders = 0;
+            let total_revenue = 0;
+            let total_items_sold = 0;
+            const paymentMethodCounts = {};
+            const productSales = {};
+
+
+            data.forEach(order => {
+                if (!cancelled.includes(order.invoice_number)) {
+                    total_orders++;
+                    total_revenue += order.shipping_charges || 0;
+
+                    order.items.forEach(item => {
+                        const sellingPrice = parseFloat(item.selling_price);
+                        const gstAmount = parseFloat(item.gst_amount);
+                        total_revenue += sellingPrice - gstAmount;
+
+                        const productName = item.name;
+                        const quantity = parseInt(item.quantity);
+                        productSales[productName] = (productSales[productName] || 0) + quantity;
+                        total_items_sold += quantity;
+                    });
+                    paymentMethodCounts[order.payment] = (paymentMethodCounts[order.payment] || 0) + 1;
+                }
+            });
+
+            const averageOrderValue = total_orders > 0 ? total_revenue / total_orders : 0;
+            const averageItemsPerOrder = total_orders > 0 ? total_items_sold / total_orders : 0;
+
+            const sortedProducts = Object.entries(productSales)
+                .sort(([, countA], [, countB]) => countB - countA);
+            const topSellingProduct = sortedProducts.length > 0 ? sortedProducts[0][0] : 'N/A';
+
+
+            return {
+                averageOrderValue,
+                averageItemsPerOrder,
+                paymentMethodCounts,
+                topSellingProduct,
+                totalItemsSold // Return totalItemsSold
+            };
+        };
+
+        const fetchCancelledOrders = () => {
+            return new Promise((resolve, reject) => {
+                fetch('cancelled_invoices.csv')
+                    .then(response => response.text())
+                    .then(csvText => {
+                        const cancelledInvoiceNumbers = csvText.split('\n').map(line => line.trim()).filter(item => item !== "");
+                        resolve(cancelledInvoiceNumbers);
+                    })
+                    .catch(error => reject(error));
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch("sale_data.json")
+                .then((res) => res.json())
+                .then((data) => {
+                    fetchCancelledOrders()
+                        .then(cancelled => {
+                            const { total_orders, total_cost, categoryRevenue, total_revenue } = calculateAll(data, cancelled);
+                            const { averageOrderValue, averageItemsPerOrder, paymentMethodCounts, topSellingProduct, totalItemsSold } = calculateAdditionalAnalytics(data, cancelled); // Destructure totalItemsSold
+
+                            // Get the elements from the HTML
+                            const averageOrderValueElement = document.getElementById("average_order_value");
+                            const averageItemsPerOrderElement = document.getElementById("average_items_per_order");
+                            const topSellingProductElement = document.getElementById("top_selling_product");
+                            const totalItemsSoldElement = document.getElementById("total_items_sold");
+                            const paymentMethodAnalysisDiv = document.getElementById("payment_method_analysis");
+                            const categoryPerformanceDiv = document.getElementById("category_performance");
+
+                            //Check if the elements exist before updating them.
+                            if (averageOrderValueElement) {
+                                averageOrderValueElement.textContent = formatIndianCurrency(averageOrderValue);
+                            }
+                            if (averageItemsPerOrderElement) {
+                                averageItemsPerOrderElement.textContent = averageItemsPerOrder.toFixed(2);
+                            }
+                            if (topSellingProductElement) {
+                                topSellingProductElement.textContent = topSellingProduct;
+                            }
+                            if (totalItemsSoldElement) {
+                                totalItemsSoldElement.textContent = totalItemsSold;
+                            }
+
+
+                            if (paymentMethodAnalysisDiv) {
+                                paymentMethodAnalysisDiv.innerHTML = '';
+                                for (const [method, count] of Object.entries(paymentMethodCounts)) {
+                                    const methodDiv = document.createElement("div");
+                                    methodDiv.className = "bg-white rounded-lg shadow-sm p-4";
+                                    methodDiv.innerHTML = `<h3 class="text-md font-semibold text-gray-700">${method}</h3><p class="text-lg text-indigo-600 font-bold">${count} orders</p>`;
+                                    paymentMethodAnalysisDiv.appendChild(methodDiv);
+                                }
+                            }
+
+                            if (categoryPerformanceDiv) {
+                                categoryPerformanceDiv.innerHTML = '';
+                                for (const [category, quantity] of Object.entries(categoryRevenue)) {
+                                    const catDiv = document.createElement("div");
+                                    catDiv.className = "bg-white rounded-lg shadow-sm p-4";
+                                    catDiv.innerHTML = `<h3 class="text-md font-semibold text-gray-700">${category}</h3><p class="text-lg text-orange-600 font-bold">${quantity} units sold</p>`;
+                                    categoryPerformanceDiv.appendChild(catDiv);
+                                }
+                            }
+
+
+                        })
+                        .catch(error => console.error("Error fetching or parsing cancelled orders:", error));
+                })
+                .catch(error => {
+                    console.error("Error fetching or processing data:", error);
+                });
+        });
+    </script>
+</body>
+</html>

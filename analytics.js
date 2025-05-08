@@ -31,7 +31,7 @@ const calculateAll = (data, cancelled) => {
         if (!cancelled.includes(order.invoice_number)) {
             total_orders++;
             let orderCost = 0;
-            let orderRevenue = order.shipping_charges || 0; // Initialize with shipping
+            let orderRevenue = order.shipping_charges || 0; 
 
             order.items.forEach(item => {
                 const costPrice = parseFloat(item.cost_price);
@@ -84,7 +84,7 @@ fetch("sale_data.json")
                 document.getElementById("total_revenue").innerHTML = total_revenue;
 
                 const box = document.getElementById("breakdown");
-                box.innerHTML = ''; // Clear the initial "TEST" value
+                box.innerHTML = '';
                 breakdown.forEach((item) => {
                     const row = document.createElement("p");
                     row.innerHTML = `${item?.category} = ${item?.revenue}`;
