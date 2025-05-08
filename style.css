@@ -1,0 +1,264 @@
+/* Littlebox Analytics Dashboard Styles
+   Modern, Professional & Brand-aligned styling */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Brand color palette based on Littlebox website */
+    --primary: #000000;
+    --secondary: #9a0000;
+    --accent: #ff1616;
+    --light: #f8f8f8;
+    --gray: #e5e5e5;
+    --dark-gray: #555555;
+    --text: #333333;
+    --success: #28a745;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: var(--text);
+    background-color: var(--light);
+    padding: 0;
+    margin: 0;
+}
+
+/* Main container */
+.analytics-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header with logo and title */
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--gray);
+    padding-bottom: 1.5rem;
+}
+
+.logo {
+    height: 40px;
+}
+
+.dashboard-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Dashboard content */
+.dashboard-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.metric-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.metric-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--dark-gray);
+    margin-bottom: 0.8rem;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.metric-note {
+    font-size: 0.8rem;
+    color: var(--dark-gray);
+    font-style: italic;
+}
+
+/* Category breakdown section */
+.breakdown-section {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2.5rem;
+}
+
+.breakdown-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    border-bottom: 2px solid var(--gray);
+    padding-bottom: 0.8rem;
+}
+
+.breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    background-color: var(--light);
+    transition: background-color 0.2s ease;
+}
+
+.category-item:hover {
+    background-color: var(--gray);
+}
+
+.category-name {
+    font-weight: 500;
+}
+
+.category-value {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Footwear category styling */
+.category-Footwear .category-value {
+    color: var(--secondary);
+}
+
+/* Clothing category styling */
+.category-Clothing .category-value {
+    color: var(--accent);
+}
+
+/* Total revenue card - special highlight */
+.total-revenue-card {
+    background: linear-gradient(135deg, var(--primary) 0%, #333333 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 1.8rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    margin-bottom: 2.5rem;
+}
+
+.total-revenue-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.total-revenue-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.total-revenue-note {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Footer styling */
+.dashboard-footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--gray);
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .breakdown-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .metric-value, .total-revenue-value {
+        font-size: 1.8rem;
+    }
+    
+    .analytics-container {
+        padding: 1.5rem;
+    }
+}
+
+/* Animation for metrics */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.metric-value, .category-value, .total-revenue-value {
+    animation: countUp 0.8s ease forwards;
+}
+
+/* Staggered animation for category items */
+.category-item:nth-child(1) { animation-delay: 0.1s; }
+.category-item:nth-child(2) { animation-delay: 0.2s; }
+.category-item:nth-child(3) { animation-delay: 0.3s; }
+.category-item:nth-child(4) { animation-delay: 0.4s; }
+.category-item:nth-child(5) { animation-delay: 0.5s; }
+
+/* Add this class to body when data is loading */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Loading spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 2rem auto;
+    display: none;
+}
+
+.loading .spinner {
+    display: block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

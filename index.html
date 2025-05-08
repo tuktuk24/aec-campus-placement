@@ -3,22 +3,118 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Analytics for Littlebox</title>
+        <title>Analytics Dashboard | Littlebox</title>
+        <link rel="stylesheet" href="style.css">
+        <!-- Font Awesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body>
-        <div>
-            <h1>Total number of orders: <span id="total_orders"></span></h1>
-            <h4>
-                Total cost of orders:(C.P. of items+labelling cost_packaging
-                cost) <span id="total_cost"></span>
-            </h4>
-            <h4>Breakdown of Categorywise revenue: (S.P - GST)</h4>
-            <div id="breakdown"></div>
-            <h4>
-                Total Revenue: (S.P - GST of all products in order + shipping of the
-                order) <span id="total_revenue"></span>
-            </h4>
+        <div class="analytics-container">
+            <!-- Header with logo and title -->
+            <header class="dashboard-header">
+                <div class="logo-container">
+                    <img src="https://littleboxindia.com/cdn/shop/files/provicali_new_logo_2_1_260x.png?v=1661172939" alt="Littlebox Logo" class="logo">
+                </div>
+                <h1 class="dashboard-title">Analytics Dashboard</h1>
+            </header>
+
+            <!-- Main metrics cards -->
+            <div class="dashboard-content">
+                <div class="metric-card">
+                    <h3 class="metric-title">
+                        <i class="fas fa-shopping-bag"></i>
+                        Total Orders
+                    </h3>
+                    <div class="metric-value" id="total_orders">--</div>
+                    <p class="metric-note">Successfully completed orders</p>
+                </div>
+
+                <div class="metric-card">
+                    <h3 class="metric-title">
+                        <i class="fas fa-tags"></i>
+                        Total Cost
+                    </h3>
+                    <div class="metric-value" id="total_cost">--</div>
+                    <p class="metric-note">C.P. + Labelling + Packaging costs</p>
+                </div>
+            </div>
+
+            <!-- Category breakdown section -->
+            <section class="breakdown-section">
+                <h3 class="breakdown-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Category-wise Revenue Breakdown
+                </h3>
+                <div class="breakdown-grid" id="breakdown">
+                    <!-- Category items will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Total revenue highlight card -->
+            <div class="total-revenue-card">
+                <h3 class="total-revenue-title">
+                    <i class="fas fa-coins"></i>
+                    Total Revenue
+                </h3>
+                <div class="total-revenue-value" id="total_revenue">--</div>
+                <p class="total-revenue-note">S.P. - GST of all products + shipping charges</p>
+            </div>
+
+            <!-- Loading spinner -->
+            <div class="spinner"></div>
+
+            <!-- Footer -->
+            <footer class="dashboard-footer">
+                <p>&copy; 2025 Littlebox India. All analytics data updated in real-time.</p>
+            </footer>
         </div>
+
+        <!-- Custom Analytics Script -->
         <script src="analytics.js" defer></script>
+        
+        <!-- Script to handle category items display -->
+        <script>
+            // Add 'loading' class initially
+            document.body.classList.add('loading');
+            
+            // Original script will populate the data, but we need to modify it to create proper category items
+            const originalAppendChild = Element.prototype.appendChild;
+            
+            Element.prototype.appendChild = function(child) {
+                // If this is the breakdown container and the child is a paragraph element
+                if (this.id === 'breakdown' && child.tagName === 'P') {
+                    // Create a proper category item instead
+                    const content = child.innerHTML;
+                    const [category, value] = content.split(' = ');
+                    
+                    const categoryItem = document.createElement('div');
+                    categoryItem.className = `category-item category-${category}`;
+                    
+                    const categoryName = document.createElement('span');
+                    categoryName.className = 'category-name';
+                    categoryName.textContent = category;
+                    
+                    const categoryValue = document.createElement('span');
+                    categoryValue.className = 'category-value';
+                    categoryValue.textContent = value;
+                    
+                    categoryItem.appendChild(categoryName);
+                    categoryItem.appendChild(categoryValue);
+                    
+                    // Return the properly styled element
+                    return originalAppendChild.call(this, categoryItem);
+                }
+                
+                // Otherwise, proceed normally
+                return originalAppendChild.call(this, child);
+            }
+            
+            // Remove loading class when data is loaded
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    document.body.classList.remove('loading');
+                }, 800); // Short delay for visual effect
+            });
+        </script>
     </body>
 </html>
