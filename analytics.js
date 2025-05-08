@@ -8,7 +8,7 @@ Promise.all([
     const cancelledInvoices = csvData
         .trim()
         .split("\n")
-        .slice(1)  // Skip the header
+        .slice(1)  
         .map(line => line.trim());
 
     // Perform calculations
