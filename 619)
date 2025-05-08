@@ -1,0 +1,32 @@
+def Minmax(A, B):
+    # Minimum connections: Distribute houses as evenly as possible
+    # Each locality must have at least 1 house
+    # For a complete graph with n houses, connections = n*(n-1)/2
+    min_connections = 0
+    houses_per_locality = A // B
+    extra_houses = A % B
+    
+    for _ in range(B):
+        if extra_houses > 0:
+            # Some localities get one extra house
+            n = houses_per_locality + 1
+            extra_houses -= 1
+        else:
+            n = houses_per_locality
+        min_connections += (n * (n - 1)) // 2
+    
+    # Maximum connections: Put maximum houses in one locality
+    # 1 house in (B-1) localities, remaining (A-B+1) in one locality
+    max_connections = 0
+    # B-1 localities with 1 house each (0 connections)
+    # One locality with A-B+1 houses
+    n = A - B + 1
+    max_connections = (n * (n - 1)) // 2
+    
+    return min_connections, max_connections
+
+# Input handling
+A = int(input())
+B = int(input())
+min_conn, max_conn = Minmax(A, B)
+print(min_conn, max_conn)
