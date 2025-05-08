@@ -1,24 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Analytics for Littlebox</title>
-    </head>
-    <body>
-        <div>
-            <h1>Total number of orders: <span id="total_orders"></span></h1>
-            <h4>
-                Total cost of orders:(C.P. of items+labelling cost_packaging
-                cost) <span id="total_cost"></span>
-            </h4>
-            <h4>Breakdown of Categorywise revenue: (S.P - GST)</h4>
-            <div id="breakdown"></div>
-            <h4>
-                Total Revenue: (S.P - GST of all products in order + shipping of the
-                order) <span id="total_revenue"></span>
-            </h4>
-        </div>
-        <script src="analytics.js" defer></script>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Analytics Dashboard</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333;
+        line-height: 1.6;
+      }
+      h1 {
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+      }
+      .metric {
+        background-color: #f8f9fa;
+        padding: 15px 20px;
+        margin: 15px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .metric h2,
+      .metric h3 {
+        margin-top: 0;
+        color: #2980b9;
+      }
+      .metric p {
+        margin-bottom: 5px;
+        color: #7f8c8d;
+      }
+      #breakdown {
+        margin-top: 15px;
+        background-color: white;
+        border-radius: 6px;
+        padding: 10px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      .breakdown-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 10px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+      .breakdown-item:last-child {
+        border-bottom: none;
+      }
+      .category {
+        font-weight: 600;
+        color: #2c3e50;
+      }
+      .revenue {
+        color: #27ae60;
+        font-weight: bold;
+      }
+      #total_cost,
+      #total_revenue {
+        font-size: 1.2em;
+        color: #e74c3c;
+        font-weight: bold;
+      }
+      #error-message {
+        color: #e74c3c;
+        padding: 10px;
+        background-color: #fdecea;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      .subtext {
+        font-size: 0.9em;
+        color: #95a5a6;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📊 Order Analytics Dashboard</h1>
+    <div id="error-message"></div>
+
+    <div class="metric">
+      <h2>📦 Total Valid Orders</h2>
+      <p class="subtext">Count of orders after removing cancellations</p>
+      <p id="total_orders">0</p>
+    </div>
+
+    <div class="metric">
+      <h3>💰 Total Order Cost</h3>
+      <p class="subtext">(Cost price of items + labeling + packaging)</p>
+      <p id="total_cost">₹0.00</p>
+    </div>
+
+    <div class="metric">
+      <h3>📈 Revenue Breakdown by Category</h3>
+      <p class="subtext">(Selling Price - GST) grouped by product category</p>
+      <div id="breakdown">
+        <!-- Breakdown items will be inserted here -->
+      </div>
+    </div>
+
+    <div class="metric">
+      <h3>💵 Total Revenue</h3>
+      <p class="subtext">
+        (Selling Price - GST for all items + shipping charges)
+      </p>
+      <p id="total_revenue">₹0.00</p>
+    </div>
+
+    <script src="analytics.js"></script>
+  </body>
 </html>
