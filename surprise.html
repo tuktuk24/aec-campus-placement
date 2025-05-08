@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Order Analytics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+        .metric-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .stat-change.positive {
+            color: #10B981;
+        }
+        .stat-change.negative {
+            color: #EF4444;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-6">
+    <div class="container mx-auto">
+        <header class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2 text-center">Littlebox Analytics Dashboard</h1>
+            <p class="text-gray-600 text-center">Comprehensive sales and order analysis</p>
+        </header>
+
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow p-6 metric-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Average Order Value</h2>
+                        <p id="average_order_value" class="text-2xl font-bold text-blue-600 mt-1">Loading...</p>
+                    </div>
+                    <span class="text-white bg-blue-500 rounded-full p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                </div>
+                <div id="aov_trend" class="stat-change mt-2 text-sm"></div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6 metric-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Items Per Order</h2>
+                        <p id="average_items_per_order" class="text-2xl font-bold text-green-600 mt-1">Loading...</p>
+                    </div>
+                    <span class="text-white bg-green-500 rounded-full p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                        </svg>
+                    </span>
+                </div>
+                <div id="items_per_order_trend" class="stat-change mt-2 text-sm"></div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6 metric-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Revenue</h2>
+                        <p id="total_revenue" class="text-2xl font-bold text-purple-600 mt-1">Loading...</p>
+                    </div>
+                    <span class="text-white bg-purple-500 rounded-full p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                </div>
+                <div id="revenue_trend" class="stat-change mt-2 text-sm"></div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6 metric-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Units Sold</h2>
+                        <p id="total_items_sold" class="text-2xl font-bold text-indigo-600 mt-1">Loading...</p>
+                    </div>
+                    <span class="text-white bg-indigo-500 rounded-full p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.413l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.413 15H12z" />
+                        </svg>
+                    </span>
+                </div>
+                <div id="units_trend" class="stat-change mt-2 text-sm"></div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Revenue by Category</h2>
+                <div class="chart-container">
+                    <canvas id="category_revenue_chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Daily Order Volume</h2>
+                <div class="chart-container">
+                    <canvas id="daily_orders_chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment and Product Analysis -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Payment Method Analysis</h2>
+                <div class="chart-container">
+                    <canvas id="payment_method_chart"></canvas>
+                </div>
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4" id="payment_method_analysis"></div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Top Selling Products</h2>
+                <div id="top_products_list" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- Category and Subcategory Analysis -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Category Performance (Units Sold)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="category_performance"></div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Subcategory Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="subcategory_chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profitability Analysis -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Profitability Analysis</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Gross Profit</h3>
+                    <p id="gross_profit" class="text-xl font-bold text-green-600 mt-1">Loading...</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Profit Margin</h3>
+                    <p id="profit_margin" class="text-xl font-bold text-green-600 mt-1">Loading...</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Most Profitable Category</h3>
+                    <p id="most_profitable_category" class="text-xl font-bold text-green-600 mt-1">Loading...</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Avg. Profit per Order</h3>
+                    <p id="avg_profit_per_order" class="text-xl font-bold text-green-600 mt-1">Loading...</p>
+                </div>
+            </div>
+            <div class="mt-6">
+                <h3 class="text-md font-semibold text-gray-700 mb-2">Category Profit Margins</h3>
+                <div class="chart-container">
+                    <canvas id="category_profit_chart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Size and Shipping Analysis -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Order Size Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="order_size_chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Shipping Revenue Analysis</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-gray-50 p-4 rounded">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase">Total Shipping Revenue</h3>
+                        <p id="total_shipping_revenue" class="text-xl font-bold text-blue-600 mt-1">Loading...</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase">Avg. Shipping per Order</h3>
+                        <p id="avg_shipping_per_order" class="text-xl font-bold text-blue-600 mt-1">Loading...</p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 class="text-md font-semibold text-gray-700 mb-2">Shipping by Payment Method</h3>
+                    <div class="chart-container h-40">
+                        <canvas id="shipping_payment_chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Format currency in Indian numbering format (e.g., ₹1,23,456.78)
+        const formatIndianCurrency = (num) => {
+            // Handle NaN, null or undefined
+            if (num === null || num === undefined || isNaN(num)) {
+                return '₹0.00';
+            }
+            
+            const numStr = num.toFixed(2);
+            const parts = numStr.split('.');
+            const wholePart = parts[0];
+            const decimalPart = parts[1];
+            
+            let formattedWhole = '';
+            let count = 0;
+            
+            for (let i = wholePart.length - 1; i >= 0; i--) {
+                count++;
+                formattedWhole = wholePart[i] + formattedWhole;
+                
+                // Add commas: first after 3 digits, then after every 2 digits
+                // Only add comma if this isn't the last digit
+                if (i > 0) {
+                    if (count === 3) {
+                        formattedWhole = ',' + formattedWhole;
+                    } else if (count > 3 && (count - 3) % 2 === 0) {
+                        formattedWhole = ',' + formattedWhole;
+                    }
+                }
+            }
+            
+            return `₹${formattedWhole}.${decimalPart}`;
+        };
+
+        // Format percentage with 2 decimal places
+        const formatPercentage = (num) => {
+            if (num === null || num === undefined || isNaN(num)) {
+                return '0.00%';
+            }
+            return (num * 100).toFixed(2) + '%';
+        };
+
+        // Random pastel color generator for charts
+        const generatePastelColor = () => {
+            const hue = Math.floor(Math.random() * 360);
+            return `hsl(${hue}, 70%, 80%)`;
+        };
+
+        // Generate an array of pastel colors
+        const generateColorArray = (count) => {
+            const colors = [];
+            for (let i = 0; i < count; i++) {
+                colors.push(generatePastelColor());
+            }
+            return colors;
+        };
+
+        // Truncate long strings
+        const truncate = (str, length = 20) => {
+            if (!str) return '';
+            return str.length > length ? str.substring(0, length) + '...' : str;
+        };
+
+        // Group data by date
+        const groupByDate = (data, cancelled) => {
+            const dateGroups = {};
+            
+            data.forEach(order => {
+                if (!cancelled.includes(order.invoice_number)) {
+                    const dateParts = order.sale_date.split('/');
+                    // Ensure we have a standardized date format (MM/DD/YYYY)
+                    const dateKey = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`;
+                    
+                    if (!dateGroups[dateKey]) {
+                        dateGroups[dateKey] = { orders: 0, revenue: 0, items: 0 };
+                    }
+                    
+                    dateGroups[dateKey].orders += 1;
+                    dateGroups[dateKey].revenue += order.items.reduce((sum, item) => {
+                        return sum + (parseFloat(item.selling_price) - (item.gst_amount || 0)) * item.quantity;
+                    }, 0) + (order.shipping_charges || 0);
+                    
+                    dateGroups[dateKey].items += order.items.reduce((sum, item) => {
+                        return sum + parseInt(item.quantity);
+                    }, 0);
+                }
+            });
+            
+            return dateGroups;
+        };
+
+        // Comprehensive analytics calculation
+        const calculateComprehensiveAnalytics = (data, cancelled) => {
+            let total_orders = 0;
+            let total_revenue = 0;
+            let total_cost = 0;
+            let total_items_sold = 0;
+            let total_shipping_revenue = 0;
+            
+            // Category and subcategory tracking
+            const categoryRevenue = {};
+            const categoryProfit = {};
+            const categoryCost = {};
+            const categoryItems = {};
+            const subcategoryItems = {};
+            
+            // Payment method tracking
+            const paymentMethodCounts = {};
+            const paymentMethodRevenue = {};
+            const paymentMethodShipping = {};
+            
+            // Product tracking
+            const productSales = {};
+            const orderSizes = { 1: 0, 2: 0, '3+': 0 };
+            
+            // Process each order
+            data.forEach(order => {
+                if (!cancelled.includes(order.invoice_number)) {
+                    total_orders++;
+                    const shipping = order.shipping_charges || 0;
+                    total_shipping_revenue += shipping;
+                    
+                    // Track payment methods
+                    const paymentMethod = order.payment || 'Unknown';
+                    paymentMethodCounts[paymentMethod] = (paymentMethodCounts[paymentMethod] || 0) + 1;
+                    paymentMethodShipping[paymentMethod] = (paymentMethodShipping[paymentMethod] || 0) + shipping;
+                    
+                    // Calculate order metrics
+                    let orderRevenue = shipping;
+                    let orderCost = (order.packaging_cost || 0) + (order.labelling_cost || 0);
+                    let orderItems = 0;
+                    
+                    // Track order size
+                    const itemCount = order.items.length;
+                    if (itemCount === 1) orderSizes['1']++;
+                    else if (itemCount === 2) orderSizes['2']++;
+                    else orderSizes['3+']++;
+                    
+                    // Process each item in the order
+                    order.items.forEach(item => {
+                        const sellingPrice = parseFloat(item.selling_price);
+                        const costPrice = parseFloat(item.cost_price);
+                        const gstAmount = parseFloat(item.gst_amount || 0);
+                        const quantity = parseInt(item.quantity);
+                        const category = item.category || 'Uncategorized';
+                        const subcategory = item.subcategory || 'Uncategorized';
+                        const productName = item.name;
+                        
+                        // Revenue calculation (SP - GST)
+                        const itemRevenue = (sellingPrice - gstAmount) * quantity;
+                        orderRevenue += itemRevenue;
+                        
+                        // Cost calculation
+                        const itemCost = costPrice * quantity;
+                        orderCost += itemCost;
+                        
+                        // Track items
+                        orderItems += quantity;
+                        total_items_sold += quantity;
+                        
+                        // Category tracking
+                        if (!categoryRevenue[category]) {
+                            categoryRevenue[category] = 0;
+                            categoryCost[category] = 0;
+                            categoryItems[category] = 0;
+                        }
+                        categoryRevenue[category] += itemRevenue;
+                        categoryCost[category] += itemCost;
+                        categoryItems[category] += quantity;
+                        
+                        // Subcategory tracking
+                        if (!subcategoryItems[subcategory]) {
+                            subcategoryItems[subcategory] = 0;
+                        }
+                        subcategoryItems[subcategory] += quantity;
+                        
+                        // Product tracking
+                        productSales[productName] = (productSales[productName] || 0) + quantity;
+                    });
+                    
+                    // Update totals
+                    total_revenue += orderRevenue;
+                    total_cost += orderCost;
+                    
+                    // Update payment method revenue
+                    paymentMethodRevenue[paymentMethod] = (paymentMethodRevenue[paymentMethod] || 0) + orderRevenue;
+                }
+            });
+            
+            // Calculate profitability metrics
+            const gross_profit = total_revenue - total_cost;
+            const profit_margin = total_revenue > 0 ? gross_profit / total_revenue : 0;
+            const avg_profit_per_order = total_orders > 0 ? gross_profit / total_orders : 0;
+            const avg_shipping_per_order = total_orders > 0 ? total_shipping_revenue / total_orders : 0;
+            
+            // Calculate category profit margins
+            const categoryProfitMargins = {};
+            let most_profitable_category = '';
+            let highest_profit = 0;
+            
+            Object.keys(categoryRevenue).forEach(category => {
+                const profit = categoryRevenue[category] - categoryCost[category];
+                const margin = categoryRevenue[category] > 0 ? profit / categoryRevenue[category] : 0;
+                categoryProfitMargins[category] = margin;
+                categoryProfit[category] = profit;
+                
+                if (profit > highest_profit) {
+                    highest_profit = profit;
+                    most_profitable_category = category;
+                }
+            });
+            
+            // Calculate average order value and items per order
+            const averageOrderValue = total_orders > 0 ? total_revenue / total_orders : 0;
+            const averageItemsPerOrder = total_orders > 0 ? total_items_sold / total_orders : 0;
+            
+            // Get top selling products (top 5)
+            const topSellingProducts = Object.entries(productSales)
+                .sort(([, countA], [, countB]) => countB - countA)
+                .slice(0, 5);
+            
+            // Get top selling product name
+            const topSellingProduct = topSellingProducts.length > 0 ? topSellingProducts[0][0] : 'N/A';
+            
+            return {
+                total_orders,
+                total_revenue,
+                total_cost,
+                total_items_sold,
+                total_shipping_revenue,
+                gross_profit,
+                profit_margin,
+                avg_profit_per_order,
+                avg_shipping_per_order,
+                most_profitable_category,
+                categoryRevenue,
+                categoryItems,
+                categoryProfit,
+                categoryProfitMargins,
+                subcategoryItems,
+                paymentMethodCounts,
+                paymentMethodRevenue,
+                paymentMethodShipping,
+                topSellingProducts,
+                topSellingProduct,
+                averageOrderValue,
+                averageItemsPerOrder,
+                orderSizes
+            };
+        };
+
+        // Fetch cancelled orders (with error handling)
+        const fetchCancelledOrders = () => {
+            return new Promise((resolve) => {
+                fetch('cancelled_invoices.csv')
+                    .then(response => response.text())
+                    .then(csvText => {
+                        const cancelledInvoiceNumbers = csvText.split('\n').map(line => line.trim()).filter(item => item !== "");
+                        resolve(cancelledInvoiceNumbers);
+                    })
+                    .catch(() => {
+                        console.warn("Could not load cancelled orders, assuming none");
+                        resolve([]);
+                    });
+            });
+        };
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            // Simulate loading indicator for better UX
+            const loadingIndicators = document.querySelectorAll('[id$="_trend"]');
+            loadingIndicators.forEach(el => {
+                el.innerHTML = '<span class="inline-block animate-pulse bg-gray-200 rounded w-16 h-4"></span>';
+            });
+            
+            // Fetch data and render dashboard
+            fetch("sale_data.json")
+                .then((res) => res.json())
+                .then((data) => {
+                    fetchCancelledOrders()
+                        .then(cancelled => {
+                            // Calculate comprehensive analytics
+                            const analytics = calculateComprehensiveAnalytics(data, cancelled);
+                            
+                            // Update key metrics
+                            document.getElementById("average_order_value").textContent = formatIndianCurrency(analytics.averageOrderValue);
+                            document.getElementById("average_items_per_order").textContent = analytics.averageItemsPerOrder.toFixed(2);
+                            document.getElementById("total_revenue").textContent = formatIndianCurrency(analytics.total_revenue);
+                            document.getElementById("total_items_sold").textContent = analytics.total_items_sold;
+                            
+                            // Update profitability metrics
+                            document.getElementById("gross_profit").textContent = formatIndianCurrency(analytics.gross_profit);
+                            document.getElementById("profit_margin").textContent = formatPercentage(analytics.profit_margin);
+                            document.getElementById("most_profitable_category").textContent = analytics.most_profitable_category;
+                            document.getElementById("avg_profit_per_order").textContent = formatIndianCurrency(analytics.avg_profit_per_order);
+                            
+                            // Update shipping metrics
+                            document.getElementById("total_shipping_revenue").textContent = formatIndianCurrency(analytics.total_shipping_revenue);
+                            document.getElementById("avg_shipping_per_order").textContent = formatIndianCurrency(analytics.avg_shipping_per_order);
+                            
+                            // Simulate trend indicators (would be calculated from historical data in a real app)
+                            const trends = ["↑ 5.2% vs. last month", "↓ 1.3% vs. last month", "↑ 8.7% vs. last month", "↑ 4.1% vs. last month"];
+                            const trendElements = [
+                                document.getElementById("aov_trend"),
+                                document.getElementById("items_per_order_trend"),
+                                document.getElementById("revenue_trend"),
+                                document.getElementById("units_trend")
+                            ];
+                            
+                            trendElements.forEach((el, i) => {
+                                el.innerHTML = trends[i];
+                                el.classList.add(trends[i].includes("↑") ? "positive" : "negative");
+                            });
+                            
+                            // Populate category performance
+                            const categoryPerformanceDiv = document.getElementById("category_performance");
+                            if (categoryPerformanceDiv) {
+                                categoryPerformanceDiv.innerHTML = '';
+                                Object.entries(analytics.categoryItems).forEach(([category, quantity]) => {
+                                    const catDiv = document.createElement("div");
+                                    catDiv.className = "bg-gray-50 p-4 rounded flex justify-between items-center";
+                                    catDiv.innerHTML = `
+                                        <div>
+                                            <h3 class="text-sm font-semibold text-gray-700">${category}</h3>
+                                            <p class="text-xs text-gray-500">Profit Margin: ${formatPercentage(analytics.categoryProfitMargins[category])}</p>
+                                        </div>
+                                        <p class="text-lg font-bold text-orange-600">${quantity} units</p>
+                                    `;
+                                    categoryPerformanceDiv.appendChild(catDiv);
+                                });
+                            }
+                            
+                            // Populate payment method analysis
+                            const paymentMethodAnalysisDiv = document.getElementById("payment_method_analysis");
+                            if (paymentMethodAnalysisDiv) {
+                                paymentMethodAnalysisDiv.innerHTML = '';
+                                Object.entries(analytics.paymentMethodCounts).forEach(([method, count]) => {
+                                    const methodDiv = document.createElement("div");
+                                    methodDiv.className = "bg-gray-50 p-4 rounded";
+                                    methodDiv.innerHTML = `
+                                        <h3 class="text-sm font-semibold text-gray-700">${method}</h3>
+                                        <p class="text-lg font-bold text-indigo-600">${count} orders</p>
+                                        <p class="text-xs text-gray-500">Revenue: ${formatIndianCurrency(analytics.paymentMethodRevenue[method] || 0)}</p>
+                                    `;
+                                    paymentMethodAnalysisDiv.appendChild(methodDiv);
+                                });
+                            }
+                            
+                            // Populate top products list
+                            const topProductsListDiv = document.getElementById("top_products_list");
+                            if (topProductsListDiv) {
+                                topProductsListDiv.innerHTML = '';
+                                analytics.topSellingProducts.forEach(([product, quantity], index) => {
+                                    const productDiv = document.createElement("div");
+                                    productDiv.className = "bg-gray-50 p-4 rounded flex items-center space-x-3";
+                                    productDiv.innerHTML = `
+                                        <div class="flex-shrink-0 w-8 h-8 bg-indigo-100 text-indigo-800 rounded-full flex items-center justify-center font-bold">
+                                            ${index + 1}
+                                        </div>
+                                        <div class="flex-grow">
+                                            <h4 class="text-sm font-semibold text-gray-700">${truncate(product, 40)}</h4>
+                                            <p class="text-xs text-gray-500">SKU: ${product.split(" - ")[0]}</p>
+                                        </div>
+                                        <div class="flex-shrink-0 text-right">
+                                            <p class="text-lg font-bold text-green-600">${quantity}</p>
+                                            <p class="text-xs text-gray-500">units sold</p>
+                                        </div>
+                                    `;
+                                    topProductsListDiv.appendChild(productDiv);
+                                });
+                            }
+                            
+                            // Create charts (with random data for demonstration purposes)
+                            
+                            // 1. Category Revenue Chart
+                            const categoryLabels = Object.keys(analytics.categoryRevenue);
+                            const categoryRevenueData = categoryLabels.map(category => analytics.categoryRevenue[category]);
+                            const categoryColors = generateColorArray(categoryLabels.length);
+                            
+                            new Chart(document.getElementById('category_revenue_chart'), {
+                                type: 'doughnut',
+                                data: {
+                                    labels: categoryLabels,
+                                    datasets: [{
+                                        data: categoryRevenueData,
+                                        backgroundColor: categoryColors,
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'right',
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // 2. Daily Orders Chart
+                            const dateGroups = groupByDate(data, cancelled);
+                            const sortedDates = Object.keys(dateGroups).sort((a, b) => new Date(a) - new Date(b));
+                            const ordersByDate = sortedDates.map(date => dateGroups[date].orders);
+                            const revenueByDate = sortedDates.map(date => dateGroups[date].revenue);
+                            
+                            new Chart(document.getElementById('daily_orders_chart'), {
+                                type: 'line',
+                                data: {
+                                    labels: sortedDates,
+                                    datasets: [
+                                        {
+                                            label: 'Orders',
+                                            data: ordersByDate,
+                                            borderColor: '#3f51b5',
+                                            backgroundColor: 'rgba(63, 81, 181, 0.1)',
+                                            borderWidth: 2,
+                                            fill: true,
+                                            tension: 0.4
+                                        },
+                                        {
+                                            label: 'Revenue',
+                                            data: revenueByDate,
+                                            borderColor: '#10B981',
+                                            backgroundColor: 'rgba(16, 185, 129, 0.0)',
+                                            borderWidth: 2,
+                                            borderDash: [5, 5],
+                                            fill: false,
+                                            tension: 0.4,
+                                            yAxisID: 'y1'
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    interaction: {
+                                        mode: 'index',
+                                        intersect: false,
+                                    },
+                                    scales: {
+                                        y: {
+                                            type: 'linear',
+                                            display: true,
+                                            position: 'left',
+                                            title: {
+                                                display: true,
+                                                text: 'Order Count'
+                                            }
+                                        },
+                                        y1: {
+                                            type: 'linear',
+                                            display: true,
+                                            position: 'right',
+                                            title: {
+                                                display: true,
+                                                text: 'Revenue (₹)'
+                                            },
+                                            grid: {
+                                                drawOnChartArea: false
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // 3. Payment Method Chart
+                            const paymentMethods = Object.keys(analytics.paymentMethodCounts);
+                            const paymentCounts = paymentMethods.map(method => analytics.paymentMethodCounts[method]);
+                            const paymentColors = ['#3f51b5', '#f44336', '#ff9800', '#4caf50', '#9c27b0'].slice(0, paymentMethods.length);
+                            
+                            new Chart(document.getElementById('payment_method_chart'), {
+                                type: 'pie',
+                                data: {
+                                    labels: paymentMethods,
+                                    datasets: [{
+                                        data: paymentCounts,
+                                        backgroundColor: paymentColors,
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'bottom',
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // 4. Subcategory Chart
+                            const subcategories = Object.keys(analytics.subcategoryItems);
+                            const subcategoryCounts = subcategories.map(subcat => analytics.subcategoryItems[subcat]);
+                            const subcategoryColors = generateColorArray(subcategories.length);
+                            
+                            new Chart(document.getElementById('subcategory_chart'), {
+                                type: 'bar',
+                                data: {
+                                    labels: subcategories,
+                                    datasets: [{
+                                        label: 'Units Sold',
+                                        data: subcategoryCounts,
+                                        backgroundColor: subcategoryColors,
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Units Sold'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // 5. Category Profit Chart
+                            const categoryProfitData = categoryLabels.map(category => analytics.categoryProfitMargins[category] * 100);
+                            
+                            new Chart(document.getElementById('category_profit_chart'), {
+                                type: 'bar',
+                                data: {
+                                    labels: categoryLabels,
+                                    datasets: [{
+                                        label: 'Profit Margin (%)',
+                                        data: categoryProfitData,
+                                        backgroundColor: '#4caf50',
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Profit Margin (%)'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // 6. Order Size Chart
+                            const orderSizeLabels = Object.keys(analytics.orderSizes);
+                            const orderSizeCounts = orderSizeLabels.map(size => analytics.orderSizes[size]);
+                            
+                            new Chart(document.getElementById('order_size_chart'), {
+                                type: 'doughnut',
+                                data: {
+                                    labels: orderSizeLabels.map(size => `${size} ${size === '1' ? 'item' : 'items'}`),
+                                    datasets: [{
+                                        data: orderSizeCounts,
+                                        backgroundColor: ['#ff9800', '#3f51b5', '#4caf50'],
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'right',
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // 7. Shipping by Payment Method Chart
+                            const shippingByPayment = paymentMethods.map(method => analytics.paymentMethodShipping[method] || 0);
+                            
+                            new Chart(document.getElementById('shipping_payment_chart'), {
+                                type: 'bar',
+                                data: {
+                                    labels: paymentMethods,
+                                    datasets: [{
+                                        label: 'Shipping Revenue',
+                                        data: shippingByPayment,
+                                        backgroundColor: '#00bcd4',
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Shipping Revenue (₹)'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        })
+                        .catch(error => {
+                            console.error("Error processing analytics:", error);
+                            document.body.innerHTML += `<div class="bg-red-100 text-red-800 p-4 rounded m-6">Error loading dashboard: ${error.message}</div>`;
+                        });
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    document.body.innerHTML += `<div class="bg-red-100 text-red-800 p-4 rounded m-6">Error loading data: ${error.message}</div>`;
+                });
+        });
+    </script>
+</body>
+</html>
